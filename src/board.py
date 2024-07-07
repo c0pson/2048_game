@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from copy import deepcopy
 import random
 
 from properties import SIZES, COLOR
@@ -32,14 +33,14 @@ class Board(ctk.CTkFrame):
                     return True
         return False
 
-    def display_board(self):
+    def display_board(self) -> None:
         self.board_matrix = [[None for _ in range(4)] for _ in range(4)]
         for i, row in enumerate(self.board):
             for j, tile in enumerate(row):
                 tile_frame = ctk.CTkLabel(self, width=int(SIZES.CELL_WIDTH),
                                         height=int(SIZES.CELL_HEIGHT),
                                         text=f'{tile.number}', fg_color= COLOR.GRAY,
-                                        corner_radius=10, font=ctk.CTkFont('Franklin Gothic', 21))
+                                        corner_radius=10, font=ctk.CTkFont('Franklin Gothic', 64))
                 tile_frame.grid(column=j, row=i, sticky=ctk.NSEW, padx=5, pady=5)
                 self.board_matrix[i][j] = tile_frame
 
@@ -47,14 +48,33 @@ class Board(ctk.CTkFrame):
         for i, row in enumerate(self.board_matrix):
             for j, tile in enumerate(row):
                 tile.configure(text=f'{self.board[i][j].number}')
-                if self.board[i][j].number > 4:
-                    tile.configure(fg_color = COLOR.GREEN)
-                elif self.board[i][j].number > 32:
-                    tile.configure(fg_color = COLOR.ORANGE)
+                if self.board[i][j].number <= 4:
+                    tile.configure(fg_color = COLOR.GRAY)
                 elif self.board[i][j].number > 256:
                     tile.configure(fg_color = COLOR.RED)
+                elif self.board[i][j].number > 32:
+                    tile.configure(fg_color = COLOR.ORANGE)
+                elif self.board[i][j].number > 4:
+                    tile.configure(fg_color = COLOR.GREEN)
 
-    def move_up(self, event):
+    def check_if_can_move(self, original_boar) -> bool:
+        for i, row in enumerate(original_boar):
+            for j, tile in enumerate(row):
+                if self.board[i][j].number != original_boar[i][j]:
+                    return False
+        return True
+
+    def sum_up(self) -> None:
+        for i, row in enumerate(self.board):
+            for j, tile in enumerate(row):
+                if not i:
+                    continue
+                if self.board[i][j].number == self.board[i-1][j].number and self.board[i][j].number:
+                    self.board[i-1][j].number *= 2
+                    self.board[i][j].number = 0
+
+    def move_up(self, event, iter: int) -> None:
+        original_board = [[self.board[j][i].number for i in range(4)] for j in range(4)]
         for _ in range(3):
             for i, row in enumerate(self.board):
                 for j, tile in enumerate(row):
@@ -63,17 +83,88 @@ class Board(ctk.CTkFrame):
                     if self.board[i][j].number and not self.board[i-1][j].number:
                         self.board[i-1][j].number = self.board[i][j].number
                         self.board[i][j].number = 0
-                    elif (self.board[i][j].number == self.board[i-1][j].number) and self.board[i][j].number:
-                        self.board[i-1][j].number = self.board[i][j].number * 2
+        if iter:
+            self.sum_up()
+            self.move_up(event, iter-1)
+            if not self.check_if_can_move(original_board):
+                self.new_tile()
+        self.update_board()
+
+    def sum_down(self) -> None:
+        for i in range(len(self.board)-1, -1, -1):
+            for j in range(len(self.board[i])):
+                if i == len(self.board) - 1:
+                    continue
+                if self.board[i][j].number == self.board[i+1][j].number and self.board[i][j].number:
+                    self.board[i+1][j].number *= 2
+                    self.board[i][j].number = 0
+
+    def move_down(self, event, iter: int) -> None:
+        original_board = [[self.board[j][i].number for i in range(4)] for j in range(4)]
+        for _ in range(3):
+            for i in range(len(self.board)-1, -1, -1):
+                for j in range(len(self.board[i])):
+                    if i == len(self.board) - 1:
+                        continue
+                    if self.board[i][j].number and not self.board[i+1][j].number:
+                        self.board[i+1][j].number = self.board[i][j].number
                         self.board[i][j].number = 0
-        self.new_tile()
+        if iter:
+            self.sum_down()
+            self.move_down(event, iter-1)
+            if not self.check_if_can_move(original_board):
+                self.new_tile()
         self.update_board()
 
-    def move_down(self, event):
+    def sum_right(self):
+        for i, row in enumerate(self.board):
+            for j in range(len(row)-1, -1, -1):
+                if j == len(row) - 1:
+                    continue
+                if self.board[i][j].number == self.board[i][j+1].number and self.board[i][j].number:
+                    self.board[i][j+1].number *= 2
+                    self.board[i][j].number = 0
+
+    def move_right(self, event, iter: int) -> None:
+        original_board = [[self.board[j][i].number for i in range(4)] for j in range(4)]
+        for _ in range(3):
+            for i, row in enumerate(self.board):
+                for j in range(len(row)-1, -1, -1):
+                    if j == len(row) - 1:
+                        continue
+                    if self.board[i][j].number and not self.board[i][j+1].number:
+                        self.board[i][j+1].number = self.board[i][j].number
+                        self.board[i][j].number = 0
+        if iter:
+            self.sum_right()
+            self.move_right(event, iter-1)
+            if not self.check_if_can_move(original_board):
+                self.new_tile()
         self.update_board()
 
-    def move_right(self, event):
-        self.update_board()
 
-    def move_left(self, event):
+    def sum_left(self):
+        for i, row in enumerate(self.board):
+            for j in range(len(row)):
+                if not j:
+                    continue
+                if self.board[i][j].number == self.board[i][j-1].number and self.board[i][j].number:
+                    self.board[i][j-1].number *= 2
+                    self.board[i][j].number = 0
+
+    def move_left(self, event, iter: int) -> None:
+        original_board = [[self.board[j][i].number for i in range(4)] for j in range(4)]
+        for _ in range(3):
+            for i, row in enumerate(self.board):
+                for j in range(len(row)):
+                    if not j:
+                        continue
+                    if self.board[i][j].number and not self.board[i][j-1].number:
+                        self.board[i][j-1].number = self.board[i][j].number
+                        self.board[i][j].number = 0
+        if iter:
+            self.sum_left()
+            self.move_left(event, iter-1)
+            if not self.check_if_can_move(original_board):
+                self.new_tile()
         self.update_board()

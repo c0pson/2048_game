@@ -3,7 +3,7 @@ import customtkinter as ctk
 import random
 
 class Tile(ctk.CTkButton):
-    def __init__(self, master):
+    def __init__(self, master) -> None:
         super().__init__(master)
         self.number = 0
 

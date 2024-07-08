@@ -33,6 +33,9 @@ class MainWindow(ctk.CTk):
         self.bind('<Right>', lambda e: self.board.move_right(e, 1))
         self.bind('<Left>', lambda e: self.board.move_left(e, 1))
         self.menu.pause_start(None, restart=restart_)
+        if restart_:
+            self.score_table.points = 0
+            self.score_table.update_score()
 
     def unlock(self) -> None:
         self.menu.game_over = False

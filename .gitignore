@@ -3,3 +3,6 @@
 .mypy_cache
 mypy.ini
 __pycache__
+dist
+build
+2048.spec

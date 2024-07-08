@@ -7,6 +7,7 @@ This project is a Python implementation of the popular 2048 game using the `cust
 - [Installation](#installation)
 - [Usage](#usage)
 - [Dependencies](#dependencies)
+- [Overview](#overview)
 
 ## Installation
 
@@ -47,3 +48,11 @@ You can install the dependencies using the following command:
 ```bash
 pip install customtkinter
 ```
+
+## Overview
+
+![Game Screenshot](img\image.png?raw=true "Start of the game")
+
+![Game Screenshot](img\image2.png?raw=true "Game over")
+
+![Game Screenshot](img\image3.png?raw=true "Paused game")

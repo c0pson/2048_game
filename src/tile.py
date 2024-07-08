@@ -8,5 +8,5 @@ class Tile(ctk.CTkButton):
         self.number = 0
 
     def generate_number(self) -> None:
-        numbers = [2,2,2,2,4]
+        numbers = [2,2,2,2,2,4]
         self.number = random.choice(numbers)

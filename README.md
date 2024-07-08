@@ -51,8 +51,8 @@ pip install customtkinter
 
 ## Overview
 
-![Game Screenshot](img\image.png?raw=true "Start of the game")
+![Game Screenshot](img/image.png?raw=true "Start of the game")
 
-![Game Screenshot](img\image2.png?raw=true "Game over")
+![Game Screenshot](img/image2.png?raw=true "Game over")
 
-![Game Screenshot](img\image3.png?raw=true "Paused game")
+![Game Screenshot](img/image3.png?raw=true "Paused game")

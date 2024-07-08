@@ -28,9 +28,15 @@ This project is a Python implementation of the popular 2048 game using the `cust
 
 Run the `main.py` script to start the game:
 
+For windows:
 ```bash
-python main.py
+python .\src\main.py
 ```
+For linux:
+```bash
+python3 src/main.py
+```
+
 ## Dependencies
 
 - Python 3.x

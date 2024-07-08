@@ -65,7 +65,7 @@ class Board(ctk.CTkFrame):
             for j, tile in enumerate(row):
                 tile.configure(text=f'{self.board[i][j].number}')
                 if os.name == 'nt':
-                    color = getattr(COLOR, f'TILE_{tile.cget('text')}')
+                    color = getattr(COLOR, f'TILE_{tile.cget("text")}')
                 else:
                     color = COLOR.TILE_0
                 tile.configure(fg_color = color)

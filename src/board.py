@@ -1,14 +1,23 @@
 import customtkinter as ctk
-from copy import deepcopy
 import random
+import sys
+import os
 
 from properties import SIZES, COLOR
 from tile import Tile
 
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS2
+    except Exception:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
+
 class Board(ctk.CTkFrame):
     def __init__(self, master) -> None:
         self.main_menu = master
-        super().__init__(master)
+        ctk.FontManager.windows_load_font(resource_path('fonts\\Poppins-Black.ttf'))
+        super().__init__(master, fg_color=COLOR.FOREGROUND)
         self.board = self.create_board()
         self.display_board()
         self.new_tile()
@@ -26,6 +35,7 @@ class Board(ctk.CTkFrame):
             y = random.randrange(0, 4)
         self.board[x][y].generate_number()
         self.update_board()
+        self.main_menu.update_score(self.board[x][y].number)
         self.check_lose()
 
     def check_space(self) -> bool:
@@ -42,7 +52,8 @@ class Board(ctk.CTkFrame):
                 tile_frame = ctk.CTkLabel(self, width=int(SIZES.CELL_WIDTH),
                                         height=int(SIZES.CELL_HEIGHT),
                                         text=f'{tile.number}', fg_color= COLOR.GRAY,
-                                        corner_radius=10, font=ctk.CTkFont('Franklin Gothic', 64))
+                                        corner_radius=10, font=ctk.CTkFont('Poppins', 64),
+                                        text_color=COLOR.TEXT_1)
                 tile_frame.grid(column=j, row=i, sticky=ctk.NSEW, padx=5, pady=5)
                 self.board_matrix[i][j] = tile_frame
 
@@ -50,14 +61,8 @@ class Board(ctk.CTkFrame):
         for i, row in enumerate(self.board_matrix):
             for j, tile in enumerate(row):
                 tile.configure(text=f'{self.board[i][j].number}')
-                if self.board[i][j].number <= 4:
-                    tile.configure(fg_color = COLOR.GRAY)
-                elif self.board[i][j].number > 256:
-                    tile.configure(fg_color = COLOR.RED)
-                elif self.board[i][j].number > 32:
-                    tile.configure(fg_color = COLOR.ORANGE)
-                elif self.board[i][j].number > 4:
-                    tile.configure(fg_color = COLOR.GREEN)
+                color = getattr(COLOR, f'TILE_{tile.cget('text')}')
+                tile.configure(fg_color = color)
 
     def check_if_can_move(self, original_boar) -> bool:
         for i, row in enumerate(original_boar):
@@ -74,6 +79,7 @@ class Board(ctk.CTkFrame):
                 if self.board[i][j].number == self.board[i-1][j].number and self.board[i][j].number:
                     self.board[i-1][j].number *= 2
                     self.board[i][j].number = 0
+                    self.main_menu.update_score(self.board[i-1][j].number)
 
     def move_up(self, event, iter: int) -> None:
         original_board = [[self.board[j][i].number for i in range(4)] for j in range(4)]
@@ -103,6 +109,7 @@ class Board(ctk.CTkFrame):
                 if self.board[i][j].number == self.board[i+1][j].number and self.board[i][j].number:
                     self.board[i+1][j].number *= 2
                     self.board[i][j].number = 0
+                    self.main_menu.update_score(self.board[i+1][j].number)
 
     def move_down(self, event, iter: int) -> None:
         original_board = [[self.board[j][i].number for i in range(4)] for j in range(4)]
@@ -132,6 +139,7 @@ class Board(ctk.CTkFrame):
                 if self.board[i][j].number == self.board[i][j+1].number and self.board[i][j].number:
                     self.board[i][j+1].number *= 2
                     self.board[i][j].number = 0
+                    self.main_menu.update_score(self.board[i][j+1].number)
 
     def move_right(self, event, iter: int) -> None:
         original_board = [[self.board[j][i].number for i in range(4)] for j in range(4)]
@@ -162,6 +170,7 @@ class Board(ctk.CTkFrame):
                 if self.board[i][j].number == self.board[i][j-1].number and self.board[i][j].number:
                     self.board[i][j-1].number *= 2
                     self.board[i][j].number = 0
+                    self.main_menu.update_score(self.board[i][j-1].number)
 
     def move_left(self, event, iter: int) -> None:
         original_board = [[self.board[j][i].number for i in range(4)] for j in range(4)]
@@ -210,14 +219,14 @@ class Board(ctk.CTkFrame):
 
     def restart(self):
         self.main_menu.end_game(True)
-        self.end_frame = ctk.CTkFrame(self)
+        self.end_frame = ctk.CTkFrame(self.master, fg_color=COLOR.FOREGROUND, corner_radius=0)
         self.end_frame.place(relx=0.5, rely=0.5, anchor=ctk.CENTER, relwidth=1)
-        self.notification = ctk.CTkLabel(self.end_frame, font=ctk.CTkFont('Franklin Gothic', 94),
-                                        text='GAME OVER')
+        self.notification = ctk.CTkLabel(self.end_frame, font=ctk.CTkFont('Poppins', 94),
+                                        text='GAME OVER', text_color=COLOR.ACCENT)
         self.notification.pack(padx=10, pady=10)
-        self.restart_button = ctk.CTkButton(self.end_frame, font=ctk.CTkFont('Franklin Gothic', 94),
+        self.restart_button = ctk.CTkButton(self.end_frame, font=ctk.CTkFont('Poppins', 52),
                                         text='Restart', command=lambda: self.new_game(),
-                                        fg_color=COLOR.GRAY)
+                                        fg_color=COLOR.FOREGROUND, hover=False, text_color=COLOR.TEXT_2)
         self.restart_button.pack()
 
     def new_game(self):

@@ -16,7 +16,10 @@ def resource_path(relative_path):
 class Board(ctk.CTkFrame):
     def __init__(self, master) -> None:
         self.main_window = master
-        ctk.FontManager.windows_load_font(resource_path('fonts\\Poppins-Black.ttf'))
+        if os.name == 'nt':
+            ctk.FontManager.windows_load_font(resource_path('fonts\\Poppins-Black.ttf'))
+        else:
+            ctk.FontManager.load_font(resource_path('fonts/Poppins-Black.ttf'))
         super().__init__(master, fg_color=COLOR.FOREGROUND)
         self.board: list[list[Tile]] = self.create_board()
         self.display_board()

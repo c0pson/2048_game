@@ -15,8 +15,14 @@ class Menu(ctk.CTkFrame):
     def __init__(self, master, board) -> None:
         self.main_window = master
         super().__init__(master, fg_color=COLOR.FOREGROUND)
-        ctk.FontManager.windows_load_font(resource_path('fonts\\NotoEmoji-VariableFont_wght.ttf'))
-        ctk.FontManager.windows_load_font(resource_path('fonts\\Poppins-Black.ttf'))
+        if os.name == 'nt':
+            ctk.FontManager.windows_load_font(resource_path('fonts\\NotoEmoji-VariableFont_wght.ttf'))
+        else:
+            ctk.FontManager.load_font(resource_path('fonts/NotoEmoji-VariableFont_wght.ttf'))
+        if os.name == 'nt':
+            ctk.FontManager.windows_load_font(resource_path('fonts\\Poppins-Black.ttf'))
+        else:
+            ctk.FontManager.load_font(resource_path('fonts/Poppins-Black.ttf'))
         self.board = board
         self.time_m = 0
         self.time_s = 0

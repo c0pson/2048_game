@@ -12,7 +12,7 @@ def resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 class Menu(ctk.CTkFrame):
-    def __init__(self, master, board):
+    def __init__(self, master, board) -> None:
         self.main_window = master
         super().__init__(master, fg_color=COLOR.FOREGROUND)
         ctk.FontManager.windows_load_font(resource_path('fonts\\NotoEmoji-VariableFont_wght.ttf'))
@@ -52,9 +52,13 @@ class Menu(ctk.CTkFrame):
             return
         elif restart:
             self.paused = False
+            self.master.after_cancel(self.next)
             self.restart_timer()
             self.update_timer()
-            self.paused_label.destroy()
+            try:
+                self.paused_label.destroy()
+            except:
+                pass
         elif not self.paused:
             self.paused = True
             self.paused_frame()
@@ -71,14 +75,14 @@ class Menu(ctk.CTkFrame):
 
     def pause_button(self):
         self.pause_label = ctk.CTkLabel(self, text='⏸️', font=ctk.CTkFont('Noto Emoji', 64),
-                                        text_color=COLOR.ACCENT)
+                                        text_color=COLOR.ACCENT, anchor='n')
         self.pause_label.pack(side=ctk.RIGHT, padx=10, pady=10)
         self.pause_label.bind('<Button-1>', lambda e: self.pause_clicked(e))
 
     def paused_frame(self):
         self.paused_label = ctk.CTkLabel(self.master, text='PAUSED',
-                                        font=ctk.CTkFont('Poppins', 64),
-                                        text_color=COLOR.ACCENT)
+                                        font=ctk.CTkFont('Poppins', 84),
+                                        text_color=COLOR.ACCENT,fg_color=COLOR.FOREGROUND)
         self.paused_label.place(relx=0.5, rely=0.5, anchor=ctk.CENTER, relwidth=1)
 
     def restart_timer(self):
@@ -88,7 +92,7 @@ class Menu(ctk.CTkFrame):
 
     def restart_button(self):
         self.restart_label = ctk.CTkLabel(self, text='🔃', font=ctk.CTkFont('Noto Emoji', 64),
-                                            text_color=COLOR.ACCENT)
+                                            text_color=COLOR.ACCENT, anchor='n')
         self.restart_label.pack(side=ctk.RIGHT, padx=10, pady=10)
         self.restart_label.bind('<Button-1>', lambda e: self.restart(e))
 

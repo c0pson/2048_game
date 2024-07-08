@@ -61,7 +61,10 @@ class Board(ctk.CTkFrame):
         for i, row in enumerate(self.board_matrix):
             for j, tile in enumerate(row):
                 tile.configure(text=f'{self.board[i][j].number}')
-                color = getattr(COLOR, f'TILE_{tile.cget('text')}')
+                try:
+                    color = getattr(COLOR, f'TILE_{tile.cget('text')}')
+                except:
+                    color = COLOR.TILE_0
                 tile.configure(fg_color = color)
 
     def check_if_can_move(self, original_boar) -> bool:

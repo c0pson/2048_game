@@ -8,7 +8,7 @@ from properties import COLOR
 class MainWindow(ctk.CTk):
     def __init__(self) -> None:
         super().__init__(fg_color=COLOR.BACKGROUND)
-        self.binds = ['<Up>', '<Down>', '<Right>', '<Left>']
+        self.binds: list[str] = ['<Up>', '<Down>', '<Right>', '<Left>']
         self.score_table = ScoreTable(self)
         self.board = Board(self)
         self.menu = Menu(self, self.board)
@@ -20,24 +20,24 @@ class MainWindow(ctk.CTk):
         self.bind('<Right>', lambda e: self.board.move_right(e, 1))
         self.bind('<Left>', lambda e: self.board.move_left(e, 1))
 
-    def end_game(self, over):
+    def end_game(self, over) -> None:
         self.menu.pause_start(None, False)
         if over:
             self.menu.game_over = True
         for bind in self.binds:
             self.unbind(bind)
 
-    def start_game(self, restart_: bool):
+    def start_game(self, restart_: bool) -> None:
         self.bind('<Up>', lambda e: self.board.move_up(e, 1))
         self.bind('<Down>', lambda e: self.board.move_down(e, 1))
         self.bind('<Right>', lambda e: self.board.move_right(e, 1))
         self.bind('<Left>', lambda e: self.board.move_left(e, 1))
         self.menu.pause_start(None, restart=restart_)
 
-    def unlock(self):
+    def unlock(self) -> None:
         self.menu.game_over = False
 
-    def update_score(self, point: int):
+    def update_score(self, point: int) -> None:
         self.score_table.points += point
         self.score_table.update_score()
 

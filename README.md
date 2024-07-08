@@ -16,12 +16,12 @@ This project is a Python implementation of the popular 2048 game using the `cust
 
 2. Navigate to the project directory:
     ```bash
-    cd 2048-game
+    cd 2048_game
     ```
 
 3. Install the required dependencies:
     ```bash
-    pip install -r requirements
+    pip install -r requirements.txt
     ```
 
 ## Usage

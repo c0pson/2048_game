@@ -62,6 +62,4 @@ if __name__ == "__main__":
     window.title('2048')
     if os.name == 'nt':
         window.after(201, window.iconbitmap(resource_path('img\\logo.ico')))
-    else:
-        window.after(201, window.iconbitmap(resource_path('img/logo.ico')))
     window.mainloop()

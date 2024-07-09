@@ -247,6 +247,8 @@ class Board(ctk.CTkFrame):
         return True
 
     def restart(self) -> None:
+        self.previous_state = None
+        self.previous_state_2 = None
         self.main_window.end_game(True)
         self.end_frame = ctk.CTkFrame(self.master, fg_color=COLOR.FOREGROUND, corner_radius=0)
         self.end_frame.place(relx=0.5, rely=0.5, anchor=ctk.CENTER, relwidth=1)
@@ -259,6 +261,8 @@ class Board(ctk.CTkFrame):
         self.restart_button.pack()
 
     def new_game(self) -> None:
+        self.previous_state = None
+        self.previous_state_2 = None
         self.board = self.create_board()
         self.new_tile()
         self.new_tile()
@@ -270,6 +274,8 @@ class Board(ctk.CTkFrame):
         self.main_window.start_game(True)
 
     def undo_move(self):
+        if self.previous_state is None:
+            return
         for i, row in enumerate(self.previous_state):
             for j, tile in enumerate(row):
                 self.board[i][j].number = tile

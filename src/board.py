@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from copy import deepcopy
 import random
 import sys
 import os
@@ -21,6 +22,8 @@ class Board(ctk.CTkFrame):
         else:
             ctk.FontManager.load_font(resource_path('fonts/Poppins-Black.ttf'))
         super().__init__(master, fg_color=COLOR.FOREGROUND)
+        self.previous_state: list[list[int]] | None = None
+        self.previous_state_2: list[list[int]] | None  = None
         self.board: list[list[Tile]] = self.create_board()
         self.display_board()
         self.new_tile()
@@ -95,14 +98,20 @@ class Board(ctk.CTkFrame):
                         self.board[i-1][j].number = self.board[i][j].number
                         self.board[i][j].number = 0
         if iter:
+            if self.previous_state:
+                self.previous_state_2 = deepcopy(self.previous_state)
+            self.previous_state = deepcopy(original_board)
             self.sum_up()
             self.move_up(event, iter-1)
             if not self.check_if_can_move(original_board):
                 self.new_tile()
+            else:
+                self.previous_state = deepcopy(self.previous_state_2)
             if self.check_lose():
                 self.restart()
                 return
-        self.update_board()
+        else:
+            self.update_board()
 
     def sum_down(self) -> None:
         for i in range(len(self.board)-1, -1, -1):
@@ -125,10 +134,15 @@ class Board(ctk.CTkFrame):
                         self.board[i+1][j].number = self.board[i][j].number
                         self.board[i][j].number = 0
         if iter:
+            if self.previous_state:
+                self.previous_state_2 = deepcopy(self.previous_state)
+            self.previous_state = deepcopy(original_board)
             self.sum_down()
             self.move_down(event, iter-1)
             if not self.check_if_can_move(original_board):
                 self.new_tile()
+            else:
+                self.previous_state = deepcopy(self.previous_state_2)
             if self.check_lose():
                 self.restart()
                 return
@@ -155,10 +169,15 @@ class Board(ctk.CTkFrame):
                         self.board[i][j+1].number = self.board[i][j].number
                         self.board[i][j].number = 0
         if iter:
+            if self.previous_state:
+                self.previous_state_2 = deepcopy(self.previous_state)
+            self.previous_state = deepcopy(original_board)
             self.sum_right()
             self.move_right(event, iter-1)
             if not self.check_if_can_move(original_board):
                 self.new_tile()
+            else:
+                self.previous_state = deepcopy(self.previous_state_2)
             if self.check_lose():
                 self.restart()
                 return
@@ -185,10 +204,15 @@ class Board(ctk.CTkFrame):
                         self.board[i][j-1].number = self.board[i][j].number
                         self.board[i][j].number = 0
         if iter:
+            if self.previous_state:
+                self.previous_state_2 = deepcopy(self.previous_state)
+            self.previous_state = deepcopy(original_board)
             self.sum_left()
             self.move_left(event, iter-1)
             if not self.check_if_can_move(original_board):
                 self.new_tile()
+            else:
+                self.previous_state = deepcopy(self.previous_state_2)
             if self.check_lose():
                 self.restart()
                 return
@@ -241,3 +265,9 @@ class Board(ctk.CTkFrame):
             pass # no need for error handling here
         self.main_window.unlock()
         self.main_window.start_game(True)
+
+    def undo_move(self):
+        for i, row in enumerate(self.previous_state):
+            for j, tile in enumerate(row):
+                self.board[i][j].number = tile
+        self.update_board()

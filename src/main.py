@@ -1,9 +1,18 @@
 import customtkinter as ctk
+import sys
+import os
 
 from menu import Menu, ScoreTable
 from board import Board
 
 from properties import COLOR
+
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS2
+    except Exception:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
 
 class MainWindow(ctk.CTk):
     def __init__(self) -> None:
@@ -51,4 +60,8 @@ if __name__ == "__main__":
     window.geometry('720x940')
     window.minsize(720, 940)
     window.title('2048')
+    if os.name == 'nt':
+        window.after(201, window.iconbitmap(resource_path('img\\logo.ico')))
+    else:
+        window.after(201, window.iconbitmap(resource_path('img/logo.ico')))
     window.mainloop()

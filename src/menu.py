@@ -33,6 +33,7 @@ class Menu(ctk.CTkFrame):
         self.timer()
         self.pause_button()
         self.restart_button()
+        self.undo_button()
         self.main_window.protocol("WM_DELETE_WINDOW", self.on_closing)
 
     def timer(self) -> None:
@@ -104,6 +105,21 @@ class Menu(ctk.CTkFrame):
 
     def restart(self, event):
         self.board.new_game()
+
+    def undo_button(self):
+        self.undo_label = ctk.CTkLabel(self, text='⏪', font=ctk.CTkFont('Noto Emoji', 64),
+                                            text_color=COLOR.ACCENT, anchor='n')
+        self.undo_label.pack(side=ctk.RIGHT, padx=10, pady=10)
+        self.enable_undo()
+
+    def disable_undo(self):
+        self.undo_label.unbind('<Button-1>')
+
+    def enable_undo(self):
+        self.undo_label.bind('<Button-1>', lambda e: self.undo(e))
+
+    def undo(self, event):
+        self.board.undo_move()
 
     def on_closing(self):
         if self.next:

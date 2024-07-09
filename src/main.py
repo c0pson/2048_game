@@ -24,6 +24,7 @@ class MainWindow(ctk.CTk):
         self.menu.pause_start(None, False)
         if over:
             self.menu.game_over = True
+            self.menu.disable_undo()
         for bind in self.binds:
             self.unbind(bind)
 
@@ -36,6 +37,7 @@ class MainWindow(ctk.CTk):
         if restart_:
             self.score_table.points = 0
             self.score_table.update_score()
+            self.menu.enable_undo()
 
     def unlock(self) -> None:
         self.menu.game_over = False
